@@ -48,10 +48,3 @@ To run the application:
 - **Pinecone API Key**: Ensure your API key is set as mentioned in the usage section.
 - **Pinecone Index Name**: The application is configured to use an index named `youtube-search`. If you use a different name, update the index name in the code.
 
-## Contributing
-
-Contributions to this project are welcome. Please open an issue to discuss your ideas or submit a pull request.
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
