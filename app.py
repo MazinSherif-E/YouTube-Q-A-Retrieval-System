@@ -1,7 +1,9 @@
 import streamlit as st
 from pinecone import Pinecone
 from sentence_transformers import SentenceTransformer
+from map_calculation import compute_map  # Import the MAP calculation function
 
+# Initialize Pinecone index and SentenceTransformer model
 @st.experimental_singleton
 def init_pinecone():
     pinecone.init(api_key="<<YOUR_API_KEY>>", environment="us-west1-gcp")
@@ -14,13 +16,14 @@ def init_retriever():
 index = init_pinecone()
 retriever = init_retriever()
 
-def card(thubmnail, title, url, context):
+# Function to display search results in a card format
+def card(thumbnail, title, url, context):
     return st.markdown(f"""
     <div class="container-fluid">
         <div class="row align-items-start">
             <div class="col-md-4 col-sm-4">
                  <div class="position-relative">
-                     <a href={url}><img src={thubmnail} class="img-fluid" style="width: 192px; height: 106px"></a>
+                     <a href={url}><img src={thumbnail} class="img-fluid" style="width: 192px; height: 106px"></a>
                  </div>
              </div>
              <div  class="col-md-8 col-sm-8">
@@ -34,7 +37,7 @@ def card(thubmnail, title, url, context):
      </div>
         """, unsafe_allow_html=True)
 
-    
+# Main application code
 st.write("""
 # YouTube Q&A
 Ask me a question!
@@ -47,6 +50,13 @@ st.markdown("""
 query = st.text_input("Search!", "")
 
 if query != "":
+    # Compute MAP
+    map_score = compute_map(index, retriever)  # Call the MAP calculation function
+    
+    # Display MAP score
+    st.write(f"Mean Average Precision (MAP): {map_score}")
+    
+    # Perform retrieval and display search results
     xq = retriever.encode([query]).tolist()
     xc = index.query(vector=xq, top_k=5, include_metadata=True)
     
